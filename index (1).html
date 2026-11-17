@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Salla">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f6f3ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141413" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Salla — Groceries</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f3ee; --surface:#fffdf9; --ink:#1b1a17; --muted:#77716a; --faint:#a9a299; --line:#e8e2d8;
+  --accent:#3f5e45; --accent-ink:#fff; --accent-soft:#e3ebe0; --danger:#b4492d; --danger-soft:#f7e3dc;
+  --shadow:0 1px 0 rgba(27,26,23,.04),0 8px 24px -12px rgba(27,26,23,.18);
+  --t-produce:#e4eedb; --t-bakery:#f4e8d3; --t-dairy:#e1eaf4; --t-meat:#f5e0db; --t-pantry:#eee6d8; --t-frozen:#ddeff2;
+  --t-snacks:#fbe9d2; --t-drinks:#e9e3f4; --t-household:#e5e9e4; --t-personal:#f5e3ec; --t-other:#ebe8e3;
+  --r:22px;
+}
+@media (prefers-color-scheme:dark){
+  :root{ --bg:#141413; --surface:#1d1c1a; --ink:#f3f0ea; --muted:#a39d94; --faint:#6d685f; --line:#2c2a27;
+    --accent:#9cc39f; --accent-ink:#13201a; --accent-soft:#22302a; --danger:#ef8f72; --danger-soft:#3a231c; --shadow:none;
+    --t-produce:#26301f; --t-bakery:#33291b; --t-dairy:#1f2833; --t-meat:#35221f; --t-pantry:#2e281f; --t-frozen:#1c2e31;
+    --t-snacks:#352a1a; --t-drinks:#28233a; --t-household:#242a25; --t-personal:#33222b; --t-other:#2a2825; }
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);font-size:15px;line-height:1.4;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) calc(28px + env(safe-area-inset-bottom)) env(safe-area-inset-left);-webkit-font-smoothing:antialiased;min-height:100vh}
+button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
+input,textarea{font-family:inherit;color:var(--ink)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 18px}
+header{display:flex;align-items:flex-end;justify-content:space-between;padding:22px 0 14px;gap:12px}
+.brand{font-family:'Instrument Serif',Georgia,serif;font-size:44px;line-height:.9;letter-spacing:-.01em}
+.brand i{color:var(--accent);font-style:italic}
+.sub{color:var(--muted);font-size:13.5px;margin-top:6px}
+.hbtns{display:flex;gap:8px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line);padding:7px 11px;border-radius:999px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--faint)} .dot.on{background:#4f9a62} .dot.off{background:var(--danger)} .dot.busy{background:#d9a441;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.35}}
+.iconbtn{width:40px;height:40px;border-radius:14px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:18px}
+/* add bar */
+.addbar{position:sticky;top:0;z-index:5;padding:10px 0 12px;background:linear-gradient(var(--bg) 78%,transparent)}
+.addbar form{display:flex;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:6px 6px 6px 16px;box-shadow:var(--shadow);align-items:center}
+.addbar input{flex:1;border:none;background:none;font-size:17px;padding:10px 0;outline:none;min-width:0}
+.addbar input::placeholder{color:var(--faint)}
+.addbtn{background:var(--accent);color:var(--accent-ink);width:46px;height:46px;border-radius:15px;font-size:24px;font-weight:500;display:grid;place-items:center;flex:none}
+.suggest{margin-top:8px;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.suggest:empty{display:none}
+.sg{display:flex;align-items:center;gap:12px;padding:9px 12px;width:100%;text-align:left;border-top:1px solid var(--line)}
+.sg:first-child{border-top:none}
+.sg .tile{width:38px;height:38px;border-radius:12px;font-size:20px}
+.sg b{font-weight:600} .sg span.m{color:var(--muted);font-size:12.5px;margin-left:auto}
+/* sections */
+.sec{margin:18px 0 6px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.sec h2{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:28px;letter-spacing:-.01em}
+.sec .c{color:var(--muted);font-size:13px}
+.cat{display:flex;align-items:center;gap:8px;margin:18px 2px 10px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.cat .sw{width:10px;height:10px;border-radius:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+@media (max-width:520px){
+  .grid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .card{border-radius:18px}
+  .card .tile{border-radius:13px;margin:5px;font-size:40px}
+  .card .meta{padding:0 9px 9px;flex-direction:column;align-items:flex-start;gap:4px;min-height:0}
+  .card .nm{font-size:13.5px}
+  .card .qty{font-size:11px;padding:2px 7px}
+  .card .note{padding:0 9px 9px;margin-top:-2px;font-size:11.5px}
+  .chk{top:10px;right:10px;width:26px;height:26px} .chk svg{width:14px;height:14px}
+  .more{top:10px;left:10px;width:26px;height:26px;font-size:12px}
+}
+.card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);
+  transition:transform .18s ease, opacity .3s ease, filter .3s ease;user-select:none;-webkit-user-select:none;text-align:left;display:block;width:100%}
+.card:active{transform:scale(.97)}
+.tile{display:grid;place-items:center;overflow:hidden;position:relative}
+.tile img{width:100%;height:100%;object-fit:cover;display:block}
+.card .tile{aspect-ratio:1/1;font-size:clamp(46px,9vw,64px);border-radius:calc(var(--r) - 6px);margin:6px}
+.card .meta{padding:2px 12px 12px;display:flex;align-items:center;gap:6px;min-height:40px}
+.card .nm{font-weight:600;font-size:15px;line-height:1.2;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.card .qty{font-size:12px;font-weight:600;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 8px;white-space:nowrap}
+.card .note{padding:0 12px 12px;margin-top:-8px;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chk{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  border:1.5px solid rgba(0,0,0,.12);display:grid;place-items:center;transition:all .2s}
+.chk svg{width:16px;height:16px;opacity:0;transform:scale(.6);transition:all .2s}
+.more{position:absolute;top:14px;left:14px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.75);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  display:grid;place-items:center;font-size:15px;color:#1b1a17;opacity:.9}
+.card.done .chk{background:var(--accent);border-color:var(--accent)}
+.card.done .chk svg{opacity:1;transform:scale(1)}
+.card.done .tile{filter:grayscale(.9) opacity(.55)}
+.card.done .nm{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--muted)}
+.card.leaving{opacity:.0;transform:scale(.92)}
+.card.pop{animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.9);opacity:.4}60%{transform:scale(1.03)}100%{transform:none;opacity:1}}
+/* buy again strip */
+.strip{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.strip::-webkit-scrollbar{display:none}
+.again{flex:none;width:88px;scroll-snap-align:start;text-align:center}
+.again .tile{width:88px;height:88px;border-radius:24px;font-size:40px;border:1px solid var(--line);position:relative}
+.again .plus{position:absolute;right:6px;bottom:6px;width:24px;height:24px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:15px;font-weight:700;box-shadow:var(--shadow);color:var(--accent)}
+.again .l{font-size:12.5px;margin-top:6px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{border:1.5px dashed var(--line);border-radius:var(--r);padding:34px 18px;text-align:center;color:var(--muted)}
+.empty .big{font-family:'Instrument Serif',Georgia,serif;font-size:28px;color:var(--ink);margin-bottom:4px}
+.btn{background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:15px;padding:13px 18px;border-radius:15px;width:100%}
+.btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:var(--danger-soft);color:var(--danger)}
+.btn.sm{width:auto;padding:9px 14px;font-size:13.5px;border-radius:12px}
+.row{display:flex;gap:8px;align-items:center}
+.row>.btn{flex:1}
+/* sheet */
+.backdrop{position:fixed;inset:0;background:rgba(20,18,15,.38);z-index:30;display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+@media (min-width:700px){.backdrop{align-items:center}}
+@keyframes fade{from{opacity:0}}
+.sheet{background:var(--surface);width:100%;max-width:520px;border-radius:28px 28px 0 0;padding:18px 20px calc(24px + env(safe-area-inset-bottom));max-height:92vh;overflow-y:auto;animation:up .28s cubic-bezier(.2,.9,.3,1)}
+@media (min-width:700px){.sheet{border-radius:28px}}
+@keyframes up{from{transform:translateY(40px);opacity:.6}}
+.grab{width:42px;height:5px;border-radius:3px;background:var(--line);margin:-4px auto 14px}
+.sheet h3{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:30px;line-height:1.05;margin-bottom:4px}
+label{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 6px}
+.field{width:100%;font-size:16px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--bg);outline:none}
+.field:focus{border-color:var(--accent)}
+.hero{width:100%;aspect-ratio:4/3;border-radius:22px;font-size:96px;margin-bottom:12px}
+.cats{display:flex;flex-wrap:wrap;gap:7px}
+.cats button{padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-size:13.5px;display:flex;align-items:center;gap:6px}
+.cats button.on{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.note-s{font-size:13px;color:var(--muted);margin-top:8px}
+.steps{padding-left:20px;font-size:14px} .steps li{margin:7px 0}
+code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--bg);border:1px solid var(--line);padding:1px 5px;border-radius:6px}
+.box{background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px}
+.box h4{font-size:15px;margin-bottom:4px}
+.warn{background:var(--danger-soft);color:var(--danger);border-radius:12px;padding:10px 12px;font-size:13.5px;margin-top:10px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0}
+.switch input{width:46px;height:28px;appearance:none;-webkit-appearance:none;background:var(--line);border-radius:999px;position:relative;transition:.2s;flex:none}
+.switch input::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch input:checked{background:var(--accent)} .switch input:checked::after{left:21px}
+details summary{cursor:pointer;font-weight:600;font-size:14px;list-style:none}
+details summary::-webkit-details-marker{display:none}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom));background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:14px;font-size:14px;z-index:50;
+  display:flex;gap:14px;align-items:center;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:92%;animation:up .25s}
+.toast button{color:var(--bg);font-weight:700;text-decoration:underline}
+.basketbar{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="brand">Salla<i>.</i></div>
+      <div class="sub" id="count">Your grocery list</div>
+    </div>
+    <div class="hbtns">
+      <span class="pill" id="sync"><span class="dot"></span><span>This device</span></span>
+      <button class="iconbtn" id="settingsBtn" aria-label="Settings">⚙︎</button>
+    </div>
+  </header>
+
+  <div class="addbar">
+    <form id="addForm" autocomplete="off">
+      <input id="addInput" placeholder="Add milk, 2 kg tomatoes, bread…" enterkeyhint="done" autocapitalize="sentences">
+      <button class="addbtn" type="submit" aria-label="Add">＋</button>
+    </form>
+    <div class="suggest" id="suggest"></div>
+  </div>
+
+  <section id="listSec"></section>
+  <section id="againSec"></section>
+  <section id="basketSec"></section>
+</div>
+<input type="file" id="photoInput" accept="image/*" hidden>
+
+<script>
+/* ============ CATALOGUE ============ */
+const CATS=[
+  ['produce','Fruit & Veg','🥬'],['bakery','Bakery','🥖'],['dairy','Dairy & Eggs','🧀'],['meat','Meat & Fish','🥩'],
+  ['pantry','Pantry','🫙'],['frozen','Frozen','🧊'],['snacks','Snacks & Sweets','🍪'],['drinks','Drinks','🧃'],
+  ['household','Household','🧽'],['personal','Personal care','🧴'],['other','Other','🛒']];
+const CAT=Object.fromEntries(CATS.map(([k,n,e],i)=>[k,{n,e,i}]));
+const GUESS=[
+  [/ice ?cream|آيس ?كريم|ايس ?كريم/,'🍨','frozen'],[/coffee|قهوة/,'☕','drinks'],[/peanut butter|زبدة الفول/,'🥜','pantry'],[/coconut milk/,'🥥','pantry'],[/hot ?dog/,'🌭','meat'],
+  [/apple|تفاح/,'🍎','produce'],[/banana|موز/,'🍌','produce'],[/tomato|طماطم|بندورة/,'🍅','produce'],[/cucumber|خيار/,'🥒','produce'],
+  [/lettuce|salad|spinach|greens|kale|خس|سبانخ|جرجير/,'🥬','produce'],[/onion|بصل/,'🧅','produce'],[/garlic|ثوم/,'🧄','produce'],[/potato|بطاطس|بطاطا/,'🥔','produce'],
+  [/carrot|جزر/,'🥕','produce'],[/lemon|lime|ليمون/,'🍋','produce'],[/orange|mandarin|برتقال|يوسفي/,'🍊','produce'],[/grape|عنب/,'🍇','produce'],
+  [/strawberr|فراولة/,'🍓','produce'],[/watermelon|بطيخ/,'🍉','produce'],[/melon|شمام/,'🍈','produce'],[/avocado|أفوكادو|افوكادو/,'🥑','produce'],
+  [/pepper|capsicum|فلفل/,'🫑','produce'],[/chil+i|jalape|حار/,'🌶️','produce'],[/corn|ذرة/,'🌽','produce'],[/mushroom|فطر|مشروم/,'🍄','produce'],
+  [/broccoli|بروكلي/,'🥦','produce'],[/eggplant|aubergine|باذنجان/,'🍆','produce'],[/peach|خوخ/,'🍑','produce'],[/pear|كمثرى/,'🍐','produce'],
+  [/mango|مانجو/,'🥭','produce'],[/pineapple|أناناس|اناناس/,'🍍','produce'],[/cherr|كرز/,'🍒','produce'],[/kiwi|كيوي/,'🥝','produce'],
+  [/coconut|جوز الهند/,'🥥','produce'],[/blueberr|berr|توت/,'🫐','produce'],[/ginger|زنجبيل/,'🫚','produce'],
+  [/mint|parsley|coriander|cilantro|basil|herb|dill|نعناع|بقدونس|كزبرة|ريحان|شبت/,'🌿','produce'],[/zucchini|courgette|كوسا/,'🥒','produce'],
+  [/date|تمر/,'🌴','pantry'],[/bread|toast|baguette|bun|خبز|عيش|صامولي|توست/,'🍞','bakery'],[/croissant|كرواسون/,'🥐','bakery'],
+  [/bagel/,'🥯','bakery'],[/pita|tortilla|wrap|تورتيلا|مرقوق/,'🫓','bakery'],[/cake|كيك/,'🍰','bakery'],
+  [/milk|حليب/,'🥛','dairy'],[/laban|لبن|ayran/,'🥛','dairy'],[/egg|بيض/,'🥚','dairy'],[/cheese|جبن|جبنة|halloumi|حلوم|feta/,'🧀','dairy'],
+  [/butter|زبدة/,'🧈','dairy'],[/yog(h)?urt|زبادي|لبنة|labneh/,'🥣','dairy'],[/cream|قشطة|كريمة/,'🥛','dairy'],
+  [/chicken|دجاج/,'🍗','meat'],[/beef|steak|lamb|mutton|meat|mince|لحم|غنم|كبدة/,'🥩','meat'],[/bacon/,'🥓','meat'],
+  [/fish|salmon|tuna|hamour|سمك|سلمون|تونة|هامور/,'🐟','meat'],[/shrimp|prawn|روبيان|جمبري/,'🦐','meat'],[/sausage|hot ?dog|نقانق|سجق/,'🌭','meat'],
+  [/rice|أرز|ارز|رز/,'🍚','pantry'],[/pasta|spaghetti|macaroni|noodle|معكرونة|مكرونة|اندومي|indomie/,'🍝','pantry'],[/flour|طحين|دقيق/,'🌾','pantry'],
+  [/sugar|سكر/,'🍬','pantry'],[/salt|ملح/,'🧂','pantry'],[/oil|olive|زيت|زيتون/,'🫒','pantry'],[/honey|عسل/,'🍯','pantry'],
+  [/bean|lentil|chickpea|فول|عدس|حمص/,'🫘','pantry'],[/can(ned)?\b|tin\b|معلبات/,'🥫','pantry'],[/cereal|oat|granola|شوفان|كورن فليكس/,'🥣','pantry'],
+  [/nut|almond|cashew|pistachio|peanut|مكسرات|لوز|كاجو|فستق/,'🥜','snacks'],[/spice|cumin|paprika|cinnamon|cardamom|بهارات|كمون|قرفة|هيل/,'🫙','pantry'],
+  [/ketchup|mayo|mustard|sauce|كاتشب|مايونيز|صلصة/,'🥫','pantry'],[/jam|مربى/,'🍓','pantry'],[/tahini|طحينة/,'🫙','pantry'],
+  [/coffee|قهوة|بن\b/,'☕','drinks'],[/tea|شاي/,'🍵','drinks'],[/water|ماء|مياه/,'💧','drinks'],[/juice|عصير/,'🧃','drinks'],
+  [/soda|cola|pepsi|7up|sprite|غازي|بيبسي/,'🥤','drinks'],
+  [/chocolate|شوكولاتة|شوكولاته|nutella/,'🍫','snacks'],[/cookie|biscuit|بسكويت/,'🍪','snacks'],[/chips|crisps|شيبس/,'🥔','snacks'],
+  [/ice ?cream|آيس|ايس كريم/,'🍨','frozen'],[/frozen|مجمد|مثلج/,'🧊','frozen'],[/pizza|بيتزا/,'🍕','frozen'],[/candy|sweet|حلويات|حلاوة/,'🍬','snacks'],
+  [/popcorn|فشار/,'🍿','snacks'],
+  [/tissue|toilet|kleenex|paper towel|مناديل|محارم|ورق/,'🧻','household'],[/dish|detergent|bleach|cleaner|clorox|منظف|صابون صحون|كلوركس|تايد|tide/,'🧴','household'],
+  [/sponge|اسفنج|ليفة/,'🧽','household'],[/trash|garbage|bin bag|أكياس|اكياس/,'🗑️','household'],[/foil|wrap|قصدير/,'🧻','household'],[/batter|بطارية/,'🔋','household'],
+  [/bulb|لمبة/,'💡','household'],[/candle|شمع/,'🕯️','household'],
+  [/soap|shower|body wash|صابون|شاور/,'🧼','personal'],[/shampoo|conditioner|شامبو|بلسم/,'🧴','personal'],[/tooth|معجون|فرشاة/,'🪥','personal'],
+  [/razor|shav|حلاقة|موس/,'🪒','personal'],[/deodorant|مزيل/,'🧴','personal'],[/diaper|حفاض|حفائض|pampers/,'👶','personal'],[/baby|formula|طفل|حليب أطفال/,'🍼','personal'],
+  [/medicine|vitamin|panadol|دواء|فيتامين|بنادول/,'💊','personal'],[/cotton|قطن/,'☁️','personal'],
+];
+function guess(name){const n=String(name||'').toLowerCase();for(const [re,e,c] of GUESS)if(re.test(n))return {e,c};return {e:null,c:'other'};}
+const emojiOf=it=>it.em||guess(it.name).e||CAT[it.cat||'other']?.e||'🛒';
+
+/* ============ STATE ============ */
+const LS='salla-v1', CFG='salla-sync', PIMG='salla-pimg', GIMG='salla-gimg';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,9);
+const norm=s=>String(s||'').toLowerCase().replace(/\s+/g,' ').trim();
+let D={items:{},del:{}};
+function loadLocal(){try{const j=JSON.parse(localStorage.getItem(LS)||'null');if(j&&j.items)D={items:j.items,del:j.del||{}};}catch(e){}}
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify(D));}catch(e){}}
+const lsGet=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d;}catch(e){return d;}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
+let dirty=false;
+function commit(){saveLocal();dirty=true;render();scheduleSync();}
+const items=()=>Object.values(D.items);
+const findByName=n=>items().find(i=>norm(i.name)===norm(n));
+function touch(it,patch){Object.assign(it,patch,{u:Date.now()});}
+
+/* ============ IMAGES (IndexedDB cache) ============ */
+let idb=null;
+function idbOpen(){return new Promise(res=>{try{const r=indexedDB.open('salla',1);r.onupgradeneeded=()=>r.result.createObjectStore('img');r.onsuccess=()=>{idb=r.result;res(idb)};r.onerror=()=>res(null);}catch(e){res(null)}});}
+function idbGet(k){return new Promise(res=>{if(!idb)return res(null);try{const q=idb.transaction('img').objectStore('img').get(k);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null);}catch(e){res(null)}});}
+function idbPut(k,v){return new Promise(res=>{if(!idb)return res();try{const t=idb.transaction('img','readwrite');t.objectStore('img').put(v,k);t.oncomplete=()=>res();t.onerror=()=>res();}catch(e){res()}});}
+const memImg=new Map(), loadingImg=new Set();
+async function ensureImg(id){
+  if(!id||memImg.has(id)||loadingImg.has(id)) return;
+  loadingImg.add(id);
+  let url=await idbGet(id);
+  if(!url&&cfgOK()){ try{ url=await fetchRemoteImg(id); if(url) await idbPut(id,url); }catch(e){} }
+  loadingImg.delete(id);
+  if(url){ memImg.set(id,url); document.querySelectorAll(`[data-img="${id}"]`).forEach(el=>{el.innerHTML=`<img alt="" src="${url}">`;}); }
+}
+function tile(it,cls=''){
+  const t=CAT[it.cat]?'var(--t-'+it.cat+')':'var(--t-other)';
+  if(it.img){ const u=memImg.get(it.img); if(!u) setTimeout(()=>ensureImg(it.img)); return `<div class="tile ${cls}" style="background:${t}" data-img="${it.img}">${u?`<img alt="" src="${u}">`:`<span>${emojiOf(it)}</span>`}</div>`; }
+  return `<div class="tile ${cls}" style="background:${t}"><span>${emojiOf(it)}</span></div>`;
+}
+function compressImage(file){
+  return new Promise((res,rej)=>{
+    const url=URL.createObjectURL(file); const im=new Image();
+    im.onload=()=>{ const S=640, s=Math.min(im.naturalWidth,im.naturalHeight); const c=document.createElement('canvas'); c.width=c.height=Math.min(S,s);
+      const ctx=c.getContext('2d'); ctx.drawImage(im,(im.naturalWidth-s)/2,(im.naturalHeight-s)/2,s,s,0,0,c.width,c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg',0.8)); };
+    im.onerror=()=>{URL.revokeObjectURL(url);rej();}; im.src=url;
+  });
+}
+
+/* ============ CRYPTO (AES-256-GCM, PBKDF2) ============ */
+const te=new TextEncoder(), td=new TextDecoder();
+const b64=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s);};
+const unb64=s=>{const bin=atob(String(s).replace(/\s/g,''));const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u;};
+const keys=new Map();
+async function getKey(salt,iter){
+  const id=cfg.pass+'|'+salt+'|'+iter; if(keys.has(id)) return keys.get(id);
+  const p=(async()=>{const base=await crypto.subtle.importKey('raw',te.encode(cfg.pass),'PBKDF2',false,['deriveKey']);
+    return crypto.subtle.deriveKey({name:'PBKDF2',salt:unb64(salt),iterations:iter,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);})();
+  keys.set(id,p); p.catch(()=>keys.delete(id)); return p;
+}
+function mySalt(){let s=lsGet('salla-salt',null);if(!s){s=b64(crypto.getRandomValues(new Uint8Array(16)));lsSet('salla-salt',s);}return s;}
+async function encrypt(obj){
+  const salt=mySalt(), iter=310000, key=await getKey(salt,iter), iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,te.encode(JSON.stringify(obj))));
+  return JSON.stringify({app:'salla',v:1,cipher:'AES-256-GCM',kdf:'PBKDF2-SHA256',iter,salt,iv:b64(iv),ct:b64(ct)});
+}
+async function decrypt(text){
+  let env; try{env=JSON.parse(text);}catch(e){throw {code:'format'};}
+  if(!env||env.app!=='salla'||!env.ct) throw {code:'format'};
+  try{ const key=await getKey(env.salt,env.iter); const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(env.iv)},key,unb64(env.ct)); return JSON.parse(td.decode(pt)); }
+  catch(e){ throw {code:'pass'}; }
+}
+
+/* ============ GITHUB SYNC ============ */
+let cfg=lsGet(CFG,null);
+const cfgOK=()=>!!(cfg&&cfg.repo&&cfg.token&&cfg.pass);
+async function gh(path,opts={},extra={}){
+  let r;
+  try{ r=await fetch(`https://api.github.com/repos/${cfg.repo}${path}`,{...opts,cache:'no-store',headers:{
+      'Authorization':'Bearer '+cfg.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',
+      ...(opts.body?{'Content-Type':'application/json'}:{}),...extra}}); }
+  catch(e){ throw {code:'net'}; }
+  if(r.status===401) throw {code:'token'};
+  return r;
+}
+let etag=null, lastSha=null;
+async function pull(conditional){
+  const r=await gh('/contents/data.json',{},conditional&&etag&&lastSha?{'If-None-Match':etag}:{});
+  if(r.status===304) return {notModified:true};
+  if(r.status===404){ const rr=await gh(''); if(rr.ok) return {data:null,sha:null}; throw {code:'repo'}; }
+  if(r.status===403) throw {code:'perm'};
+  if(!r.ok) throw {code:'net'};
+  const tag=r.headers.get('ETag'); const j=await r.json(); let content=j.content;
+  if(!content&&j.sha){ const b=await gh('/git/blobs/'+j.sha); if(!b.ok) throw {code:'net'}; content=(await b.json()).content; }
+  const data=await decrypt(td.decode(unb64(content||'')));
+  etag=tag; return {data,sha:j.sha};
+}
+async function push(data,sha){
+  const body={message:'Salla sync',content:b64(te.encode(await encrypt(data)))}; if(sha) body.sha=sha;
+  const r=await gh('/contents/data.json',{method:'PUT',body:JSON.stringify(body)});
+  if(r.status===409||r.status===422) throw {code:'conflict'};
+  if(r.status===403||r.status===404) throw {code:'perm'};
+  if(!r.ok) throw {code:'net'};
+  const j=await r.json(); etag=null; return j.content&&j.content.sha;
+}
+async function fetchRemoteImg(id){
+  const r=await gh('/contents/img/'+id+'.json'); if(!r.ok) return null;
+  const j=await r.json(); let content=j.content;
+  if(!content&&j.sha){ const b=await gh('/git/blobs/'+j.sha); if(!b.ok) return null; content=(await b.json()).content; }
+  const o=await decrypt(td.decode(unb64(content||''))); return o&&o.url;
+}
+async function uploadImgs(){
+  const pend=lsGet(PIMG,[]); if(!pend.length) return;
+  for(const id of [...pend]){
+    const url=memImg.get(id)||await idbGet(id);
+    if(url){ const r=await gh('/contents/img/'+id+'.json',{method:'PUT',body:JSON.stringify({message:'Salla photo',content:b64(te.encode(await encrypt({url})))})});
+      if(!(r.ok||r.status===422)) continue; }
+    const cur=lsGet(PIMG,[]); lsSet(PIMG,cur.filter(x=>x!==id));
+  }
+}
+async function gcImgs(){
+  const g=lsGet(GIMG,[]); if(!g.length) return;
+  const inUse=new Set(items().map(i=>i.img).filter(Boolean));
+  for(const id of g){
+    if(!inUse.has(id)){ try{ const r=await gh('/contents/img/'+id+'.json'); if(r.ok){const j=await r.json(); await gh('/contents/img/'+id+'.json',{method:'DELETE',body:JSON.stringify({message:'Salla remove photo',sha:j.sha})});} }catch(e){ if(e.code==='net') continue; } }
+    lsSet(GIMG,lsGet(GIMG,[]).filter(x=>x!==id));
+  }
+}
+function merge(a,b){
+  const del={...(b.del||{})}; for(const [k,v] of Object.entries(a.del||{})) del[k]=Math.max(v,del[k]||0);
+  const out={};
+  for(const src of [b.items||{},a.items||{}]) for(const [id,it] of Object.entries(src)){
+    if(del[id]&&del[id]>=(it.u||0)) continue;
+    const p=out[id]; if(!p||(it.u||0)>(p.u||0)) out[id]=it;
+  }
+  for(const k of Object.keys(del)) if(out[k]) delete del[k];
+  return {items:out,del};
+}
+const SYNC_MSG={token:'Token not accepted',repo:'Repo not found',perm:'No write access',pass:'Wrong passphrase',format:'Not a Salla file',net:'Offline',conflict:'Retrying…'};
+let syncing=false, syncAgain=false, syncTimer=null, syncErr=null, lastOk=0;
+function setSync(){
+  const el=$('#sync'); let cls='',txt='This device';
+  if(cfgOK()){ if(syncing){cls='busy';txt='Syncing';} else if(syncErr){cls='off';txt=SYNC_MSG[syncErr]||'Sync error';} else {cls='on';txt='Synced';} }
+  el.innerHTML=`<span class="dot ${cls}"></span><span>${esc(txt)}</span>`;
+}
+function scheduleSync(){ if(!cfgOK()) return; clearTimeout(syncTimer); syncTimer=setTimeout(syncNow,900); }
+async function syncNow(){
+  if(!cfgOK()) return;
+  if(syncing){ syncAgain=true; return; }
+  syncing=true; clearTimeout(syncTimer); if(!lastOk) setSync();
+  try{
+    for(let attempt=0;;attempt++){
+      const res=await pull(attempt===0);
+      if(res.notModified){ if(!dirty) break; }
+      else{
+        lastSha=res.sha;
+        const before=JSON.stringify(D);
+        const merged=res.data?merge(JSON.parse(before),res.data):merge(JSON.parse(before),{items:{},del:{}});
+        if(JSON.stringify(merged)!==before){ D=merged; saveLocal(); render(); }
+        if(res.data&&JSON.stringify(merge(res.data,res.data))===JSON.stringify(D)){ dirty=false; break; }
+      }
+      dirty=false;
+      try{ lastSha=await push(D,lastSha); break; }
+      catch(e){ dirty=true; if(e.code!=='conflict'||attempt>=4) throw e; etag=null; }
+    }
+    await uploadImgs(); await gcImgs();
+    syncErr=null; lastOk=Date.now();
+  }catch(e){ syncErr=(e&&e.code)||'net'; }
+  syncing=false; setSync();
+  if(syncAgain){ syncAgain=false; syncNow(); }
+}
+setInterval(()=>{ if(document.visibilityState==='visible') syncNow(); },8000);
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'){ syncNow(); wake(); } });
+window.addEventListener('online',()=>syncNow());
+
+/* ============ ACTIONS ============ */
+function parseEntry(raw){
+  let s=raw.trim(); if(!s) return null; let qty='';
+  let m=s.match(/^(\d+(?:[.,]\d+)?\s*(?:kg|g|gm|l|ltr|ml|pcs|pc|x|packs?|bags?|boxes?|كيلو|كغ|غرام|لتر|حبة|حبات|علب?ة?)?)\s+(.+)$/i);
+  if(m){qty=m[1].trim();s=m[2];}
+  else if((m=s.match(/^(.+?)\s+(?:x\s*)?(\d+(?:[.,]\d+)?\s*(?:kg|g|gm|l|ltr|ml|pcs|pc|packs?|كيلو|لتر|حبة|حبات)?)$/i))){s=m[1];qty=m[2].trim();}
+  s=s.replace(/^x\s*/i,'').trim(); if(!s) return null;
+  return {name:s.charAt(0).toUpperCase()+s.slice(1),qty};
+}
+function addItem(name,qty){
+  const ex=findByName(name);
+  if(ex){
+    if(ex.on&&!ex.ck){ if(qty) touch(ex,{qty}); flash(ex.id); toast(`${ex.name} is already on the list`); return ex; }
+    touch(ex,{on:true,ck:false,uses:(ex.uses||0)+1,at:Date.now(),...(qty?{qty}:{})}); justAdded=ex.id; return ex;
+  }
+  const g=guess(name); const it={id:uid(),name,qty:qty||'',note:'',cat:g.c,img:null,on:true,ck:false,uses:1,at:Date.now(),u:Date.now()};
+  D.items[it.id]=it; justAdded=it.id; return it;
+}
+let justAdded=null;
+function addFromInput(){
+  const v=$('#addInput').value; const parts=v.split(/[,،\n]+/).map(parseEntry).filter(Boolean);
+  if(!parts.length) return;
+  for(const p of parts) addItem(p.name,p.qty);
+  $('#addInput').value=''; $('#suggest').innerHTML=''; commit();
+}
+function toggle(id){
+  const it=D.items[id]; if(!it) return;
+  const card=document.querySelector(`.card[data-id="${id}"]`);
+  touch(it,{ck:!it.ck}); saveLocal(); dirty=true; scheduleSync();
+  if(card){ card.classList.toggle('done',it.ck); setTimeout(()=>{card.classList.add('leaving'); setTimeout(render,180);},420); }
+  else render();
+  if(it.ck&&listItems().length===0) setTimeout(()=>toast('Everything is in the basket ✨'),700);
+}
+function clearBasket(){
+  const ids=items().filter(i=>i.on&&i.ck).map(i=>i.id); if(!ids.length) return;
+  ids.forEach(id=>touch(D.items[id],{on:false,ck:false})); commit();
+  toast(`Cleared ${ids.length} item${ids.length===1?'':'s'}`,'Undo',()=>{ids.forEach(id=>D.items[id]&&touch(D.items[id],{on:true,ck:true}));commit();});
+}
+function flash(id){const c=document.querySelector(`.card[data-id="${id}"]`);if(c){c.classList.remove('pop');void c.offsetWidth;c.classList.add('pop');c.scrollIntoView({behavior:'smooth',block:'center'});}}
+
+/* ============ RENDER ============ */
+const listItems=()=>items().filter(i=>i.on&&!i.ck);
+const basketItems=()=>items().filter(i=>i.on&&i.ck);
+function card(it){
+  return `<div class="card ${it.ck?'done':''} ${justAdded===it.id?'pop':''}" data-id="${it.id}" role="button" aria-pressed="${it.ck}">
+    ${tile(it)}
+    <button class="more" data-edit="${it.id}" aria-label="Edit">•••</button>
+    <span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-ink)"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+    <div class="meta"><div class="nm">${esc(it.name)}</div>${it.qty?`<span class="qty">${esc(it.qty)}</span>`:''}</div>
+    ${it.note?`<div class="note">${esc(it.note)}</div>`:''}
+  </div>`;
+}
+function render(){
+  const L=listItems(), B=basketItems();
+  $('#count').textContent=L.length?`${L.length} to get${B.length?` · ${B.length} in the basket`:''}`:(B.length?`All in the basket · ${B.length}`:'Your grocery list');
+  // list grouped by category
+  let h=`<div class="sec"><h2>To get</h2><span class="c">${L.length||''}</span></div>`;
+  if(!L.length){
+    h+=`<div class="empty"><div class="big">${B.length?'All done.':'Nothing on the list.'}</div>${B.length?'Clear the basket when you\'re home.':'Type above to add something — or tap a favourite below.'}</div>`;
+  } else {
+    const groups={}; L.forEach(i=>(groups[i.cat]=groups[i.cat]||[]).push(i));
+    for(const [k,n] of CATS) if(groups[k]){
+      groups[k].sort((a,b)=>a.name.localeCompare(b.name));
+      h+=`<div class="cat"><span class="sw" style="background:var(--t-${k});border:1px solid var(--line)"></span>${n}</div><div class="grid">${groups[k].map(card).join('')}</div>`;
+    }
+  }
+  $('#listSec').innerHTML=h;
+  // buy again
+  const again=items().filter(i=>!i.on).sort((a,b)=>(b.uses||0)-(a.uses||0)||(b.at||0)-(a.at||0)).slice(0,24);
+  $('#againSec').innerHTML=again.length?`<div class="sec"><h2>Buy again</h2><span class="c">Tap to add</span></div>
+    <div class="strip">${again.map(i=>`<button class="again" data-again="${i.id}">${tile(i).replace('</div>','<span class="plus">+</span></div>')}<div class="l">${esc(i.name)}</div></button>`).join('')}</div>`:'';
+  // basket
+  $('#basketSec').innerHTML=B.length?`<div class="sec basketbar"><h2>In the basket</h2><button class="btn sm ghost" id="clearBasket">Clear basket</button></div>
+    <div class="grid">${B.sort((a,b)=>(b.u||0)-(a.u||0)).map(card).join('')}</div>`:'';
+  justAdded=null; setSync();
+}
+function renderSuggest(){
+  const q=norm($('#addInput').value); const box=$('#suggest');
+  if(!q){box.innerHTML='';return;}
+  const p=parseEntry($('#addInput').value); const qn=p?norm(p.name):q;
+  const hits=items().filter(i=>norm(i.name).includes(qn)).sort((a,b)=>(norm(a.name).startsWith(qn)?0:1)-(norm(b.name).startsWith(qn)?0:1)||(b.uses||0)-(a.uses||0)).slice(0,6);
+  const exact=hits.some(i=>norm(i.name)===qn);
+  let h='';
+  if(!exact&&p){ const g=guess(p.name); h+=`<button class="sg" data-new="1">${tile({name:p.name,cat:g.c})}<div><b>Add “${esc(p.name)}”</b>${p.qty?` <span style="color:var(--muted)">· ${esc(p.qty)}</span>`:''}</div><span class="m">${CAT[g.c].n}</span></button>`; }
+  h+=hits.map(i=>`<button class="sg" data-pick="${i.id}">${tile(i)}<div><b>${esc(i.name)}</b></div><span class="m">${i.on&&!i.ck?'On the list':(i.on?'In basket':'Add again')}</span></button>`).join('');
+  box.innerHTML=h;
+}
+
+/* ============ SHEETS ============ */
+function sheet(html,mount){
+  const bd=document.createElement('div'); bd.className='backdrop';
+  bd.innerHTML=`<div class="sheet"><div class="grab"></div>${html}</div>`;
+  const close=()=>bd.remove(); bd.addEventListener('click',e=>{if(e.target===bd)close();});
+  document.body.appendChild(bd); mount&&mount(bd.querySelector('.sheet'),close); return close;
+}
+function editSheet(id){
+  const it=D.items[id]; if(!it) return; let cat=it.cat, img=it.img;
+  const heroHTML=()=>tile({...it,cat,img},'hero');
+  sheet(`<div id="hero">${heroHTML()}</div>
+    <div class="row"><button class="btn sm ghost" id="ph">📷 ${it.img?'Change photo':'Add photo'}</button>${it.img?'<button class="btn sm ghost" id="rmph">Remove photo</button>':''}</div>
+    <label>Name</label><input class="field" id="e-name" value="${esc(it.name)}">
+    <div class="row" style="gap:10px;align-items:flex-start">
+      <div style="flex:1"><label>Quantity</label><input class="field" id="e-qty" value="${esc(it.qty||'')}" placeholder="e.g. 2, 1 kg"></div>
+      <div style="width:96px"><label>Emoji</label><input class="field" id="e-em" value="${esc(it.em||'')}" placeholder="${emojiOf({...it,em:''})}" maxlength="4"></div>
+    </div>
+    <label>Note</label><input class="field" id="e-note" value="${esc(it.note||'')}" placeholder="Brand, size, anything">
+    <label>Aisle</label><div class="cats" id="e-cats">${CATS.map(([k,n,e])=>`<button data-c="${k}" class="${k===cat?'on':''}">${e} ${n}</button>`).join('')}</div>
+    <div class="row" style="margin-top:20px"><button class="btn ghost" id="e-list">${it.on?'Remove from list':'Add to list'}</button><button class="btn" id="e-save">Save</button></div>
+    <button class="btn danger" id="e-del" style="margin-top:10px">Delete for good</button>`,
+  (el,close)=>{
+    el.querySelector('#e-cats').onclick=e=>{const b=e.target.closest('[data-c]');if(!b)return;cat=b.dataset.c;el.querySelectorAll('#e-cats button').forEach(x=>x.classList.toggle('on',x===b));};
+    el.querySelector('#ph').onclick=()=>pickPhoto(async url=>{
+      const nid=uid(); memImg.set(nid,url); await idbPut(nid,url); lsSet(PIMG,[...lsGet(PIMG,[]),nid]);
+      if(it.img) lsSet(GIMG,[...lsGet(GIMG,[]),it.img]);
+      touch(it,{img:nid}); commit(); close(); editSheet(id);
+    });
+    const rm=el.querySelector('#rmph'); if(rm) rm.onclick=()=>{ lsSet(GIMG,[...lsGet(GIMG,[]),it.img]); touch(it,{img:null}); commit(); close(); editSheet(id); };
+    el.querySelector('#e-save').onclick=()=>{
+      const name=el.querySelector('#e-name').value.trim()||it.name;
+      touch(it,{name,qty:el.querySelector('#e-qty').value.trim(),note:el.querySelector('#e-note').value.trim(),em:el.querySelector('#e-em').value.trim(),cat});
+      commit(); close();
+    };
+    el.querySelector('#e-list').onclick=()=>{ touch(it,it.on?{on:false,ck:false}:{on:true,ck:false,uses:(it.uses||0)+1,at:Date.now()}); commit(); close(); };
+    const del=el.querySelector('#e-del');
+    del.onclick=()=>{ if(!del.dataset.sure){del.dataset.sure=1;del.textContent='Tap again to delete';return;}
+      if(it.img) lsSet(GIMG,[...lsGet(GIMG,[]),it.img]); delete D.items[id]; D.del[id]=Date.now(); commit(); close(); toast('Deleted'); };
+  });
+}
+function pickPhoto(cb){
+  const inp=$('#photoInput'); inp.value='';
+  inp.onchange=async()=>{ const f=inp.files[0]; if(!f) return; try{ cb(await compressImage(f)); }catch(e){ toast('Couldn’t read that photo'); } };
+  inp.click();
+}
+function settingsSheet(){
+  const connected=cfgOK();
+  sheet(`<h3>Settings</h3>
+    <div class="box"><h4>Sync between devices</h4>
+    ${connected?`<p class="note-s" style="margin-top:2px">Connected to <b>${esc(cfg.repo)}</b>. Changes appear on your other devices within a few seconds. Everything — list and photos — is encrypted before upload.</p>
+      ${syncErr?`<div class="warn">${esc(SYNC_MSG[syncErr]||'Sync error')}${syncErr==='pass'?' — use the same passphrase as on your other devices.':''}</div>`:''}
+      <div class="row" style="margin-top:12px"><button class="btn ghost sm" id="s-now" style="flex:1">Sync now</button><button class="btn danger sm" id="s-off" style="flex:1">Disconnect</button></div>`
+    :`<p class="note-s" style="margin-top:2px">Keep the same list on your phone and the kitchen iPad, stored encrypted in a private GitHub repo.</p>
+      <details style="margin-top:10px"><summary>One-time GitHub setup ▾</summary><ol class="steps" style="margin-top:8px">
+        <li>Create a <b>Private</b> repo, e.g. <code>salla-data</code>, ticking <b>Add a README file</b>.</li>
+        <li>GitHub › Settings › Developer settings › Fine-grained tokens › <b>Generate new token</b> (or edit your existing one).</li>
+        <li>Repository access: <b>Only select repositories</b> → <code>salla-data</code>.</li>
+        <li>Repository permissions › <b>Contents</b>: <b>Read and write</b>. Generate and copy the token.</li>
+        <li>Fill in below on each device, with the <b>same passphrase</b> everywhere.</li></ol></details>
+      <label>Storage repo</label><input class="field" id="s-repo" placeholder="username/salla-data" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(cfg?.repo||'')}">
+      <label>Access token</label><input class="field" id="s-token" type="password" placeholder="github_pat_…" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <label>Encryption passphrase</label><input class="field" id="s-pass" type="password" placeholder="A long phrase you'll remember">
+      <button class="btn" id="s-connect" style="margin-top:14px">Connect & sync</button>
+      <p class="note-s">The token and passphrase are saved only on this device.</p>`}
+    </div>
+    <div class="box"><div class="switch"><div><h4>Keep screen awake</h4><div class="note-s" style="margin-top:0">Handy for the kitchen iPad while the app is open.</div></div><input type="checkbox" id="s-wake" ${lsGet('salla-wake',false)?'checked':''}></div></div>
+    <div class="box"><h4>Backup</h4><p class="note-s" style="margin-top:2px">A copy of your list (photos not included).</p>
+      <div class="row" style="margin-top:10px"><button class="btn ghost sm" id="s-copy" style="flex:1">Copy backup</button><button class="btn ghost sm" id="s-restore" style="flex:1">Restore</button></div><div id="s-bk"></div></div>`,
+  (el,close)=>{
+    const c=el.querySelector('#s-connect');
+    if(c) c.onclick=async()=>{
+      const repo=el.querySelector('#s-repo').value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\.git$/,'').replace(/\/+$/,'');
+      const token=el.querySelector('#s-token').value.trim(), pass=el.querySelector('#s-pass').value;
+      if(!/^[\w.-]+\/[\w.-]+$/.test(repo)) return toast('Enter the repo as username/repo');
+      if(!token) return toast('Paste your access token');
+      if(pass.length<8) return toast('Use a passphrase of at least 8 characters');
+      cfg={repo,token,pass}; lsSet(CFG,cfg); keys.clear(); etag=null; lastSha=null; syncErr=null; dirty=true;
+      c.textContent='Connecting…'; await syncNow(); close();
+      toast(syncErr?SYNC_MSG[syncErr]:'Synced ✓'); if(syncErr) settingsSheet();
+    };
+    const n=el.querySelector('#s-now'); if(n) n.onclick=async()=>{ n.textContent='Syncing…'; etag=null; await syncNow(); n.textContent='Sync now'; toast(syncErr?SYNC_MSG[syncErr]:'Synced ✓'); };
+    const off=el.querySelector('#s-off'); if(off) off.onclick=()=>{ if(!off.dataset.sure){off.dataset.sure=1;off.textContent='Tap again';return;} cfg=null; try{localStorage.removeItem(CFG);}catch(e){} keys.clear(); syncErr=null; setSync(); close(); toast('Disconnected — the list stays on this device'); };
+    el.querySelector('#s-wake').onchange=e=>{ lsSet('salla-wake',e.target.checked); wake(); };
+    el.querySelector('#s-copy').onclick=async()=>{ const t=JSON.stringify({app:'salla',v:1,...D}); try{await navigator.clipboard.writeText(t);toast('Backup copied');}catch(e){el.querySelector('#s-bk').innerHTML=`<textarea class="field" style="margin-top:10px;min-height:90px" readonly>${esc(t)}</textarea>`;} };
+    el.querySelector('#s-restore').onclick=()=>{ el.querySelector('#s-bk').innerHTML=`<textarea class="field" id="s-rb" style="margin-top:10px;min-height:90px" placeholder="Paste a backup"></textarea><button class="btn sm" id="s-rdo" style="margin-top:8px">Restore</button>`;
+      el.querySelector('#s-rdo').onclick=()=>{ try{ const j=JSON.parse(el.querySelector('#s-rb').value); if(j.app!=='salla') throw 0; D=merge(D,{items:j.items||{},del:j.del||{}}); commit(); close(); toast('Restored'); }catch(e){ toast('That isn’t a Salla backup'); } }; };
+  });
+}
+let wakeLock=null;
+async function wake(){
+  try{ if(lsGet('salla-wake',false)&&'wakeLock' in navigator&&document.visibilityState==='visible'){ if(!wakeLock) { wakeLock=await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release',()=>wakeLock=null); } }
+       else if(wakeLock){ await wakeLock.release(); wakeLock=null; } }catch(e){}
+}
+let toastT;
+function toast(msg,action,fn){
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t=document.createElement('div'); t.className='toast'; t.innerHTML=`<span>${esc(msg)}</span>${action?`<button>${esc(action)}</button>`:''}`;
+  if(action) t.querySelector('button').onclick=()=>{t.remove();fn();};
+  document.body.appendChild(t); clearTimeout(toastT); toastT=setTimeout(()=>t.remove(),action?5000:2400);
+}
+
+/* ============ EVENTS ============ */
+$('#addForm').addEventListener('submit',e=>{e.preventDefault();addFromInput();});
+$('#addInput').addEventListener('input',renderSuggest);
+$('#addInput').addEventListener('blur',()=>setTimeout(()=>{$('#suggest').innerHTML='';},180));
+$('#addInput').addEventListener('focus',renderSuggest);
+$('#suggest').addEventListener('pointerdown',e=>e.preventDefault());
+$('#suggest').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.new){ addFromInput(); return; }
+  const it=D.items[b.dataset.pick]; if(!it) return;
+  const p=parseEntry($('#addInput').value);
+  addItem(it.name,p&&p.qty); $('#addInput').value=''; $('#suggest').innerHTML=''; commit();
+});
+document.addEventListener('click',e=>{
+  const ed=e.target.closest('[data-edit]'); if(ed){ e.stopPropagation(); editSheet(ed.dataset.edit); return; }
+  const ag=e.target.closest('[data-again]'); if(ag){ const it=D.items[ag.dataset.again]; if(it){ addItem(it.name); commit(); } return; }
+  if(e.target.closest('#clearBasket')){ clearBasket(); return; }
+  const c=e.target.closest('.card[data-id]'); if(c) toggle(c.dataset.id);
+});
+$('#settingsBtn').onclick=settingsSheet;
+
+/* ============ BOOT ============ */
+loadLocal(); render(); idbOpen().then(()=>render()); wake(); if(cfgOK()) syncNow();
+</script>
+</body>
+</html>
