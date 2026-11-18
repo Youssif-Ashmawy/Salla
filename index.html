@@ -18,14 +18,14 @@
   --bg:#f6f3ee; --surface:#fffdf9; --ink:#1b1a17; --muted:#77716a; --faint:#a9a299; --line:#e8e2d8;
   --accent:#3f5e45; --accent-ink:#fff; --accent-soft:#e3ebe0; --danger:#b4492d; --danger-soft:#f7e3dc;
   --shadow:0 1px 0 rgba(27,26,23,.04),0 8px 24px -12px rgba(27,26,23,.18);
-  --t-produce:#e4eedb; --t-bakery:#f4e8d3; --t-dairy:#e1eaf4; --t-meat:#f5e0db; --t-pantry:#eee6d8; --t-frozen:#ddeff2;
+  --t-fruits:#fbe4dc; --t-veggies:#e4eedb; --t-pasta:#f6ecc9; --t-spices:#f3dfcc; --t-bakery:#f4e8d3; --t-dairy:#e1eaf4; --t-meat:#f5e0db; --t-pantry:#eee6d8; --t-frozen:#ddeff2;
   --t-snacks:#fbe9d2; --t-drinks:#e9e3f4; --t-household:#e5e9e4; --t-personal:#f5e3ec; --t-other:#ebe8e3;
   --r:22px;
 }
 @media (prefers-color-scheme:dark){
   :root{ --bg:#141413; --surface:#1d1c1a; --ink:#f3f0ea; --muted:#a39d94; --faint:#6d685f; --line:#2c2a27;
     --accent:#9cc39f; --accent-ink:#13201a; --accent-soft:#22302a; --danger:#ef8f72; --danger-soft:#3a231c; --shadow:none;
-    --t-produce:#26301f; --t-bakery:#33291b; --t-dairy:#1f2833; --t-meat:#35221f; --t-pantry:#2e281f; --t-frozen:#1c2e31;
+    --t-fruits:#38231f; --t-veggies:#26301f; --t-pasta:#332d17; --t-spices:#38261a; --t-bakery:#33291b; --t-dairy:#1f2833; --t-meat:#35221f; --t-pantry:#2e281f; --t-frozen:#1c2e31;
     --t-snacks:#352a1a; --t-drinks:#28233a; --t-household:#242a25; --t-personal:#33222b; --t-other:#2a2825; }
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -176,31 +176,35 @@ details summary::-webkit-details-marker{display:none}
 <script>
 /* ============ CATALOGUE ============ */
 const CATS=[
-  ['produce','Fruit & Veg','🥬'],['bakery','Bakery','🥖'],['dairy','Dairy & Eggs','🧀'],['meat','Meat & Fish','🥩'],
-  ['pantry','Pantry','🫙'],['frozen','Frozen','🧊'],['snacks','Snacks & Sweets','🍪'],['drinks','Drinks','🧃'],
+  ['fruits','Fruits','🍎'],['veggies','Veggies','🥦'],['bakery','Bakery','🥖'],['dairy','Dairy & Eggs','🧀'],['meat','Meat & Fish','🥩'],
+  ['pasta','Pasta','🍝'],['pantry','Pantry','🫙'],['spices','Spices','🧂'],['frozen','Frozen','🧊'],['snacks','Snacks & Sweets','🍪'],['drinks','Drinks','🧃'],
   ['household','Household','🧽'],['personal','Personal care','🧴'],['other','Other','🛒']];
 const CAT=Object.fromEntries(CATS.map(([k,n,e],i)=>[k,{n,e,i}]));
 const GUESS=[
   [/ice ?cream|آيس ?كريم|ايس ?كريم/,'🍨','frozen'],[/coffee|قهوة/,'☕','drinks'],[/peanut butter|زبدة الفول/,'🥜','pantry'],[/coconut milk/,'🥥','pantry'],[/hot ?dog/,'🌭','meat'],
-  [/apple|تفاح/,'🍎','produce'],[/banana|موز/,'🍌','produce'],[/tomato|طماطم|بندورة/,'🍅','produce'],[/cucumber|خيار/,'🥒','produce'],
-  [/lettuce|salad|spinach|greens|kale|خس|سبانخ|جرجير/,'🥬','produce'],[/onion|بصل/,'🧅','produce'],[/garlic|ثوم/,'🧄','produce'],[/potato|بطاطس|بطاطا/,'🥔','produce'],
-  [/carrot|جزر/,'🥕','produce'],[/lemon|lime|ليمون/,'🍋','produce'],[/orange|mandarin|برتقال|يوسفي/,'🍊','produce'],[/grape|عنب/,'🍇','produce'],
-  [/strawberr|فراولة/,'🍓','produce'],[/watermelon|بطيخ/,'🍉','produce'],[/melon|شمام/,'🍈','produce'],[/avocado|أفوكادو|افوكادو/,'🥑','produce'],
-  [/pepper|capsicum|فلفل/,'🫑','produce'],[/chil+i|jalape|حار/,'🌶️','produce'],[/corn|ذرة/,'🌽','produce'],[/mushroom|فطر|مشروم/,'🍄','produce'],
-  [/broccoli|بروكلي/,'🥦','produce'],[/eggplant|aubergine|باذنجان/,'🍆','produce'],[/peach|خوخ/,'🍑','produce'],[/pear|كمثرى/,'🍐','produce'],
-  [/mango|مانجو/,'🥭','produce'],[/pineapple|أناناس|اناناس/,'🍍','produce'],[/cherr|كرز/,'🍒','produce'],[/kiwi|كيوي/,'🥝','produce'],
-  [/coconut|جوز الهند/,'🥥','produce'],[/blueberr|berr|توت/,'🫐','produce'],[/ginger|زنجبيل/,'🫚','produce'],
-  [/mint|parsley|coriander|cilantro|basil|herb|dill|نعناع|بقدونس|كزبرة|ريحان|شبت/,'🌿','produce'],[/zucchini|courgette|كوسا/,'🥒','produce'],
+  [/tomato (paste|sauce)|معجون طماطم|صلصة طماطم/,'🥫','pantry'],
+  [/pasta|spaghetti|macaroni|penne|fusilli|linguine|fettuccine|tagliatelle|lasagn|ravioli|tortellini|noodle|vermicelli|ramen|indomie|شعيرية|معكرونة|مكرونة|اسباجيتي|سباغيتي|لازانيا|اندومي|نودلز/,'🍝','pasta'],
+  [/spice|black pepper|white pepper|pepper powder|(garlic|onion|ginger|chil+i|curry) powder|cumin|paprika|cinnamon|cardamom|turmeric|saffron|nutmeg|clove|oregano|thyme|bay lea|sumac|za'?atar|curry|masala|baharat|seasoning|بهارات|فلفل أسود|فلفل اسود|كمون|قرفة|هيل|كركم|زعفران|جوزة الطيب|قرنفل|زعتر|سماق|كاري|ورق غار|بابريكا/,'🧂','spices'],
+  [/apple|تفاح/,'🍎','fruits'],[/banana|موز/,'🍌','fruits'],[/tomato|طماطم|بندورة/,'🍅','veggies'],[/cucumber|خيار/,'🥒','veggies'],
+  [/lettuce|salad|spinach|greens|kale|cabbage|cauliflower|خس|سبانخ|جرجير|ملفوف|قرنبيط|زهرة/,'🥬','veggies'],[/onion|بصل/,'🧅','veggies'],[/garlic|ثوم/,'🧄','veggies'],[/potato|بطاطس|بطاطا/,'🥔','veggies'],
+  [/carrot|جزر/,'🥕','veggies'],[/lemon|lime|ليمون/,'🍋','fruits'],[/orange|mandarin|برتقال|يوسفي/,'🍊','fruits'],[/grape|عنب/,'🍇','fruits'],
+  [/strawberr|فراولة/,'🍓','fruits'],[/watermelon|بطيخ/,'🍉','fruits'],[/melon|شمام/,'🍈','fruits'],[/avocado|أفوكادو|افوكادو/,'🥑','fruits'],
+  [/pomegranate|رمان/,'🍎','fruits'],[/okra|بامية/,'🥬','veggies'],
+  [/pepper|capsicum|فلفل/,'🫑','veggies'],[/chil+i|jalape|حار/,'🌶️','veggies'],[/corn|ذرة/,'🌽','veggies'],[/mushroom|فطر|مشروم/,'🍄','veggies'],
+  [/broccoli|بروكلي/,'🥦','veggies'],[/eggplant|aubergine|باذنجان/,'🍆','veggies'],[/peach|خوخ/,'🍑','fruits'],[/pear|كمثرى/,'🍐','fruits'],
+  [/mango|مانجو/,'🥭','fruits'],[/pineapple|أناناس|اناناس/,'🍍','fruits'],[/cherr|كرز/,'🍒','fruits'],[/kiwi|كيوي/,'🥝','fruits'],
+  [/coconut|جوز الهند/,'🥥','fruits'],[/blueberr|berr|توت/,'🫐','fruits'],[/ginger|زنجبيل/,'🫚','veggies'],
+  [/mint|parsley|coriander|cilantro|basil|herb|dill|نعناع|بقدونس|كزبرة|ريحان|شبت/,'🌿','veggies'],[/zucchini|courgette|كوسا/,'🥒','veggies'],
   [/date|تمر/,'🌴','pantry'],[/bread|toast|baguette|bun|خبز|عيش|صامولي|توست/,'🍞','bakery'],[/croissant|كرواسون/,'🥐','bakery'],
   [/bagel/,'🥯','bakery'],[/pita|tortilla|wrap|تورتيلا|مرقوق/,'🫓','bakery'],[/cake|كيك/,'🍰','bakery'],
   [/milk|حليب/,'🥛','dairy'],[/laban|لبن|ayran/,'🥛','dairy'],[/egg|بيض/,'🥚','dairy'],[/cheese|جبن|جبنة|halloumi|حلوم|feta/,'🧀','dairy'],
   [/butter|زبدة/,'🧈','dairy'],[/yog(h)?urt|زبادي|لبنة|labneh/,'🥣','dairy'],[/cream|قشطة|كريمة/,'🥛','dairy'],
   [/chicken|دجاج/,'🍗','meat'],[/beef|steak|lamb|mutton|meat|mince|لحم|غنم|كبدة/,'🥩','meat'],[/bacon/,'🥓','meat'],
   [/fish|salmon|tuna|hamour|سمك|سلمون|تونة|هامور/,'🐟','meat'],[/shrimp|prawn|روبيان|جمبري/,'🦐','meat'],[/sausage|hot ?dog|نقانق|سجق/,'🌭','meat'],
-  [/rice|أرز|ارز|رز/,'🍚','pantry'],[/pasta|spaghetti|macaroni|noodle|معكرونة|مكرونة|اندومي|indomie/,'🍝','pantry'],[/flour|طحين|دقيق/,'🌾','pantry'],
-  [/sugar|سكر/,'🍬','pantry'],[/salt|ملح/,'🧂','pantry'],[/oil|olive|زيت|زيتون/,'🫒','pantry'],[/honey|عسل/,'🍯','pantry'],
+  [/rice|أرز|ارز|رز/,'🍚','pantry'],[/flour|طحين|دقيق/,'🌾','pantry'],
+  [/sugar|سكر/,'🍬','pantry'],[/salt|ملح/,'🧂','spices'],[/oil|olive|زيت|زيتون/,'🫒','pantry'],[/honey|عسل/,'🍯','pantry'],
   [/bean|lentil|chickpea|فول|عدس|حمص/,'🫘','pantry'],[/can(ned)?\b|tin\b|معلبات/,'🥫','pantry'],[/cereal|oat|granola|شوفان|كورن فليكس/,'🥣','pantry'],
-  [/nut|almond|cashew|pistachio|peanut|مكسرات|لوز|كاجو|فستق/,'🥜','snacks'],[/spice|cumin|paprika|cinnamon|cardamom|بهارات|كمون|قرفة|هيل/,'🫙','pantry'],
+  [/nut|almond|cashew|pistachio|peanut|مكسرات|لوز|كاجو|فستق/,'🥜','snacks'],
   [/ketchup|mayo|mustard|sauce|كاتشب|مايونيز|صلصة/,'🥫','pantry'],[/jam|مربى/,'🍓','pantry'],[/tahini|طحينة/,'🫙','pantry'],
   [/coffee|قهوة|بن\b/,'☕','drinks'],[/tea|شاي/,'🍵','drinks'],[/water|ماء|مياه/,'💧','drinks'],[/juice|عصير/,'🧃','drinks'],
   [/soda|cola|pepsi|7up|sprite|غازي|بيبسي/,'🥤','drinks'],
@@ -224,7 +228,18 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,9);
 const norm=s=>String(s||'').toLowerCase().replace(/\s+/g,' ').trim();
 let D={items:{},del:{}};
-function loadLocal(){try{const j=JSON.parse(localStorage.getItem(LS)||'null');if(j&&j.items)D={items:j.items,del:j.del||{}};}catch(e){}}
+// Old "Fruit & Veg" (produce) → Fruits or Veggies; unknown categories → Other. Deterministic, so every device agrees.
+function normCats(d){for(const it of Object.values(d.items||{})){
+  if(it.cat==='produce') it.cat=guess(it.name).c==='fruits'?'fruits':'veggies';
+  else if(!CAT[it.cat]) it.cat='other';
+}}
+// One-time: move pasta and spices out of Pantry (only items still sitting in Pantry, so manual choices elsewhere are kept).
+function migrateCats(){
+  if(lsGet('salla-cats2',false)) return; let n=0;
+  for(const it of items()){ if(it.cat!=='pantry') continue; const g=guess(it.name).c; if(g==='pasta'||g==='spices'){touch(it,{cat:g});n++;} }
+  lsSet('salla-cats2',true); if(n){saveLocal();dirty=true;}
+}
+function loadLocal(){try{const j=JSON.parse(localStorage.getItem(LS)||'null');if(j&&j.items)D={items:j.items,del:j.del||{}};}catch(e){} normCats(D);}
 function saveLocal(){try{localStorage.setItem(LS,JSON.stringify(D));}catch(e){}}
 const lsGet=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d;}catch(e){return d;}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
@@ -372,6 +387,7 @@ async function syncNow(){
         lastSha=res.sha;
         const before=JSON.stringify(D);
         const merged=res.data?merge(JSON.parse(before),res.data):merge(JSON.parse(before),{items:{},del:{}});
+        normCats(merged);
         if(JSON.stringify(merged)!==before){ D=merged; saveLocal(); render(); }
         if(res.data&&JSON.stringify(merge(res.data,res.data))===JSON.stringify(D)){ dirty=false; break; }
       }
@@ -442,6 +458,7 @@ function card(it){
   </div>`;
 }
 function render(){
+  normCats(D);
   const L=listItems(), B=basketItems();
   $('#count').textContent=L.length?`${L.length} to get${B.length?` · ${B.length} in the basket`:''}`:(B.length?`All in the basket · ${B.length}`:'Your grocery list');
   // list grouped by category
@@ -600,7 +617,7 @@ document.addEventListener('click',e=>{
 $('#settingsBtn').onclick=settingsSheet;
 
 /* ============ BOOT ============ */
-loadLocal(); render(); idbOpen().then(()=>render()); wake(); if(cfgOK()) syncNow();
+loadLocal(); migrateCats(); render(); idbOpen().then(()=>render()); wake(); if(cfgOK()) syncNow();
 </script>
 </body>
 </html>
