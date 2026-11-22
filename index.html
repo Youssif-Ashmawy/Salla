@@ -94,6 +94,7 @@ header{display:flex;align-items:flex-end;justify-content:space-between;padding:2
 .card.done .tile{filter:grayscale(.9) opacity(.55)}
 .card.done .nm{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--muted)}
 .card.leaving{opacity:.0;transform:scale(.92)}
+.li.leaving{opacity:0;transform:translateX(12px)}
 .card.pop{animation:pop .35s ease}
 @keyframes pop{0%{transform:scale(.9);opacity:.4}60%{transform:scale(1.03)}100%{transform:none;opacity:1}}
 /* buy again strip */
@@ -225,6 +226,63 @@ textarea.field{resize:none;line-height:1.45;display:block}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:14px;overflow:hidden;flex:none}
 .seg button{padding:12px 14px;font-size:14px;font-weight:600;background:var(--bg)}
 .seg button.on{background:var(--ink);color:var(--bg)}
+/* aisle folders (to-get list) */
+.ltools{display:flex;gap:8px;align-items:center}
+.linkbtn{font-size:13px;font-weight:600;color:var(--accent);padding:6px 4px}
+.seg.sm{border-radius:12px}
+.seg.sm button{padding:7px 10px;display:grid;place-items:center;color:var(--muted)}
+.seg.sm button.on{color:var(--bg)}
+.seg.sm svg{width:17px;height:17px}
+.aisles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:0 12px;align-items:start}
+.aisle{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);margin-top:10px;overflow:hidden}
+.ahead{display:flex;align-items:center;gap:12px;width:100%;padding:9px 14px 9px 9px;text-align:left}
+.aic{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:22px;flex:none}
+.an{flex:1;min-width:0}
+.an b{display:block;font-size:15.5px;font-weight:700}
+.an small{display:block;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acount{min-width:26px;height:26px;border-radius:13px;background:var(--bg);border:1px solid var(--line);font-size:12.5px;font-weight:700;display:grid;place-items:center;padding:0 7px;flex:none}
+.chev{color:var(--faint);transition:transform .2s;flex:none;display:grid;place-items:center}
+.chev svg{width:18px;height:18px}
+.aisle:not(.shut) .chev{transform:rotate(90deg)}
+.aisle.shut .abody{display:none}
+.aisle:not(.shut) .an small{display:none}
+.abody{padding:0 8px 8px}
+.abody.rows{padding:0}
+.aisle .card{box-shadow:none;background:var(--bg)}
+/* compact rows */
+.li{display:flex;align-items:center;gap:12px;padding:8px 12px 8px 10px;border-top:1px solid var(--line);cursor:pointer;user-select:none;-webkit-user-select:none;transition:opacity .3s ease,transform .25s ease}
+.abody.nohead .li:first-child{border-top:none}
+.li:active{background:var(--bg)}
+.li .tile{width:46px;height:46px;border-radius:13px;font-size:25px;flex:none}
+.li .lt{flex:1;min-width:0}
+.li .nm{font-weight:600;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li .ls{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li .qty{font-size:12px;font-weight:600;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 8px;white-space:nowrap;flex:none;max-width:30%;overflow:hidden;text-overflow:ellipsis}
+.li .more{position:static;width:32px;height:32px;background:var(--bg);border:1px solid var(--line);color:var(--muted);font-size:11px;flex:none;opacity:1;backdrop-filter:none;-webkit-backdrop-filter:none}
+.li .chk{position:static;flex:none;background:var(--surface);width:28px;height:28px}
+.li .chk svg{width:15px;height:15px}
+.li.done .chk{background:var(--accent);border-color:var(--accent)}
+.li.done .chk svg{opacity:1;transform:scale(1)}
+.li.done .tile{filter:grayscale(.9) opacity(.55)}
+.li.done .nm{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--muted)}
+.li.pop{animation:pop .35s ease}
+/* buy-again folders */
+.cat.sub{margin:14px 2px 8px}
+.folders{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:14px 12px}
+@media (max-width:520px){.folders{grid-template-columns:repeat(3,1fr);gap:12px 10px}}
+.folder{text-align:center;min-width:0}
+.fbox{aspect-ratio:1/1;border-radius:24px;padding:9px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:7px;border:1px solid var(--line);transition:transform .18s}
+.folder:active .fbox{transform:scale(.95)}
+.fbox .tile{border-radius:12px;font-size:clamp(18px,5.4vw,27px);width:100%;height:100%;min-height:0;box-shadow:0 1px 2px rgba(0,0,0,.07)}
+.folder .fl{font-size:13px;font-weight:600;margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.folder .fc{font-size:11.5px;color:var(--muted)}
+.fhead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.fhead h3{margin:0}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:14px 10px;margin-top:14px}
+.fgrid .again{width:auto;min-width:0}
+.fgrid .again .tile{width:100%;height:auto;aspect-ratio:1/1}
+.fgrid .again.bk{opacity:.5;cursor:default}
+.plus.on{background:var(--accent)!important;color:var(--accent-ink)!important}
 </style>
 </head>
 <body>
@@ -305,7 +363,7 @@ const GUESS=[
   [/nut|almond|cashew|pistachio|peanut|مكسرات|لوز|كاجو|فستق/,'🥜','snacks'],
   [/ketchup|mayo|mustard|sauce|كاتشب|مايونيز|صلصة/,'🥫','pantry'],[/jam|مربى/,'🍓','pantry'],[/tahini|طحينة/,'🫙','pantry'],
   [/coffee|قهوة|بن\b/,'☕','drinks'],[/tea|شاي/,'🍵','drinks'],[/water|ماء|مياه/,'💧','drinks'],[/juice|عصير/,'🧃','drinks'],
-  [/soda|cola|pepsi|7up|sprite|غازي|بيبسي/,'🥤','drinks'],
+  [/soda|\bcola\b|coca|pepsi|7up|sprite|غازي|بيبسي/,'🥤','drinks'],
   [/chocolate|شوكولاتة|شوكولاته|nutella/,'🍫','snacks'],[/cookie|biscuit|بسكويت/,'🍪','snacks'],[/chips|crisps|شيبس/,'🥔','snacks'],
   [/ice ?cream|آيس|ايس كريم/,'🍨','frozen'],[/frozen|مجمد|مثلج/,'🧊','frozen'],[/pizza|بيتزا/,'🍕','frozen'],[/candy|sweet|حلويات|حلاوة/,'🍬','snacks'],
   [/popcorn|فشار/,'🍿','snacks'],
@@ -526,7 +584,7 @@ function parseEntry(raw){
 function addItem(name,qty){
   const ex=findByName(name);
   if(ex){
-    if(ex.on&&!ex.ck){ if(qty) touch(ex,{qty}); flash(ex.id); toast(`${ex.name} is already on the list`); return ex; }
+    if(ex.on&&!ex.ck){ if(qty) touch(ex,{qty}); justAdded=ex.id; flash(ex.id); toast(`${ex.name} is already on the list`); return ex; }
     touch(ex,{on:true,ck:false,uses:(ex.uses||0)+1,at:Date.now(),...(qty?{qty}:{})}); justAdded=ex.id; return ex;
   }
   const g=guess(name); const it={id:uid(),name,qty:qty||'',note:'',cat:g.c,img:null,on:true,ck:false,uses:1,at:Date.now(),u:Date.now()};
@@ -541,7 +599,7 @@ function addFromInput(){
 }
 function toggle(id){
   const it=D.items[id]; if(!it) return;
-  const card=document.querySelector(`.card[data-id="${id}"]`);
+  const card=document.querySelector(`.card[data-id="${id}"],.li[data-id="${id}"]`);
   touch(it,{ck:!it.ck}); saveLocal(); dirty=true; scheduleSync();
   if(card){ card.classList.toggle('done',it.ck); setTimeout(()=>{card.classList.add('leaving'); setTimeout(render,180);},420); }
   else render();
@@ -552,7 +610,7 @@ function clearBasket(){
   ids.forEach(id=>touch(D.items[id],{on:false,ck:false})); commit();
   toast(`Cleared ${ids.length} item${ids.length===1?'':'s'}`,'Undo',()=>{ids.forEach(id=>D.items[id]&&touch(D.items[id],{on:true,ck:true}));commit();});
 }
-function flash(id){const c=document.querySelector(`.card[data-id="${id}"]`);if(c){c.classList.remove('pop');void c.offsetWidth;c.classList.add('pop');c.scrollIntoView({behavior:'smooth',block:'center'});}}
+function flash(id){const c=document.querySelector(`.card[data-id="${id}"],.li[data-id="${id}"]`);if(c){c.classList.remove('pop');void c.offsetWidth;c.classList.add('pop');c.scrollIntoView({behavior:'smooth',block:'center'});}}
 
 /* ============ RENDER ============ */
 const listItems=()=>items().filter(i=>i.on&&!i.ck);
@@ -566,29 +624,89 @@ function card(it){
     ${it.note?`<div class="note">${esc(it.note)}</div>`:''}
   </div>`;
 }
+const ICON_TILES='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/></svg>';
+const ICON_ROWS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.1" fill="currentColor"/><circle cx="4.5" cy="12" r="1.1" fill="currentColor"/><circle cx="4.5" cy="18" r="1.1" fill="currentColor"/></svg>';
+const ICON_CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+const listView=()=>lsGet('salla-lview','tiles')==='rows'?'rows':'tiles';
+const byUse=(a,b)=>(b.uses||0)-(a.uses||0)||(b.at||0)-(a.at||0);
+const againBtn=i=>`<button class="again" data-again="${i.id}">${tile(i).replace('</div>','<span class="plus">+</span></div>')}<div class="l">${esc(i.name)}</div></button>`;
+function rowCard(it){
+  const sub=it.note||'';
+  return `<div class="li ${it.ck?'done':''} ${justAdded===it.id?'pop':''}" data-id="${it.id}" role="button" aria-pressed="${it.ck}">
+    ${tile(it)}<div class="lt"><div class="nm">${esc(it.name)}</div>${sub?`<div class="ls">${esc(sub)}</div>`:''}</div>
+    ${it.qty?`<span class="qty">${esc(it.qty)}</span>`:''}
+    <button class="more" data-edit="${it.id}" aria-label="Edit">•••</button>
+    <span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-ink)"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+  </div>`;
+}
+function againFolder(k){
+  const added=new Set(), rank=new Map(items().filter(i=>i.cat===k).sort(byUse).map((i,n)=>[i.id,n]));
+  sheet(`<div class="fhead"><span class="aic" style="background:var(--t-${k})">${CAT[k].e}</span><div><h3>${esc(CAT[k].n)}</h3><div class="note-s" style="margin:0">Tap to add to your list, tap again to take it off.</div></div></div>
+    <div class="fgrid" id="fg"></div><button class="btn" id="fdone" style="margin-top:18px">Done</button>`,
+  (el,close)=>{
+    const draw=()=>{
+      const all=items().filter(i=>i.cat===k&&(!i.on||added.has(i.id)||!i.ck)).sort((a,b)=>(rank.get(a.id)??1e9)-(rank.get(b.id)??1e9));
+      el.querySelector('#fg').innerHTML=all.map(i=>{
+        const on=i.on&&!i.ck;
+        return `<button class="again" data-ftog="${i.id}" aria-pressed="${on}">${tile(i).replace('</div>',`<span class="plus ${on?'on':''}">${on?'✓':'+'}</span></div>`)}<div class="l">${esc(i.name)}</div></button>`;
+      }).join('')||`<p class="note-s">Nothing here right now.</p>`;
+      el.querySelector('#fdone').textContent=added.size?`Done · ${added.size} added`:'Done';
+    };
+    draw();
+    el.querySelector('#fg').onclick=e=>{
+      const b=e.target.closest('[data-ftog]'); if(!b) return; const it=D.items[b.dataset.ftog]; if(!it) return;
+      if(it.on&&!it.ck){ touch(it,{on:false,ck:false}); added.delete(it.id); }
+      else { addItem(it.name); added.add(it.id); justAdded=null; }
+      commit(); draw();
+    };
+    el.querySelector('#fdone').onclick=close;
+  });
+}
+function listClick(e){
+  let b;
+  if((b=e.target.closest('[data-fold]'))){ const f=lsGet('salla-fold',{}), k=b.dataset.fold; f[k]?delete f[k]:f[k]=1; lsSet('salla-fold',f); render(); return true; }
+  if((b=e.target.closest('[data-foldall]'))){ const f={}; if(b.dataset.foldall==='1') CATS.forEach(([k])=>f[k]=1); lsSet('salla-fold',f); render(); return true; }
+  if((b=e.target.closest('[data-lview]'))){ lsSet('salla-lview',b.dataset.lview); render(); return true; }
+  if((b=e.target.closest('[data-afold]'))){ againFolder(b.dataset.afold); return true; }
+  return false;
+}
 function render(){
   normCats(D);
   const L=listItems(), B=basketItems();
   $('#count').textContent=L.length?`${L.length} to get${B.length?` · ${B.length} in the basket`:''}`:(B.length?`All in the basket · ${B.length}`:'Your grocery list');
-  // list grouped by category
-  let h=`<div class="sec"><h2>To get</h2><span class="c">${L.length||''}</span></div>`;
+  const rows=listView()==='rows', fold=lsGet('salla-fold',{});
+  if(justAdded&&D.items[justAdded]&&fold[D.items[justAdded].cat]){ delete fold[D.items[justAdded].cat]; lsSet('salla-fold',fold); }
+  const body=arr=>rows?`<div class="abody rows">${arr.map(rowCard).join('')}</div>`:`<div class="abody"><div class="grid">${arr.map(card).join('')}</div></div>`;
+  // to get: one folder per aisle
+  const groups={}; L.forEach(i=>(groups[i.cat]=groups[i.cat]||[]).push(i));
+  const present=CATS.filter(([k])=>groups[k]), anyOpen=present.some(([k])=>!fold[k]);
+  let h=`<div class="sec"><h2>To get</h2><div class="ltools">${present.length>1?`<button class="linkbtn" data-foldall="${anyOpen?1:0}">${anyOpen?'Fold all':'Open all'}</button>`:''}
+    <div class="seg sm" role="group" aria-label="View"><button data-lview="tiles" class="${rows?'':'on'}" aria-label="Tiles">${ICON_TILES}</button><button data-lview="rows" class="${rows?'on':''}" aria-label="Compact list">${ICON_ROWS}</button></div></div></div>`;
   if(!L.length){
-    h+=`<div class="empty"><div class="big">${B.length?'All done.':'Nothing on the list.'}</div>${B.length?'Clear the basket when you\'re home.':'Type above to add something — or tap a favourite below.'}</div>`;
-  } else {
-    const groups={}; L.forEach(i=>(groups[i.cat]=groups[i.cat]||[]).push(i));
-    for(const [k,n] of CATS) if(groups[k]){
-      groups[k].sort((a,b)=>a.name.localeCompare(b.name));
-      h+=`<div class="cat"><span class="sw" style="background:var(--t-${k});border:1px solid var(--line)"></span>${n}</div><div class="grid">${groups[k].map(card).join('')}</div>`;
-    }
-  }
+    h+=`<div class="empty"><div class="big">${B.length?'All done.':'Nothing on the list.'}</div>${B.length?'Clear the basket when you\'re home.':'Type above to add something — or open a folder below.'}</div>`;
+  } else { h+='<div class="aisles">'; for(const [k,n,e] of present){
+    const g=groups[k].sort((a,b)=>a.name.localeCompare(b.name));
+    h+=`<div class="aisle ${fold[k]?'shut':''}"><button class="ahead" data-fold="${k}" aria-expanded="${!fold[k]}"><span class="aic" style="background:var(--t-${k})">${e}</span>
+      <span class="an"><b>${esc(n)}</b><small>${esc(g.map(i=>i.name).join(', '))}</small></span><span class="acount">${g.length}</span><span class="chev">${ICON_CHEV}</span></button>${body(g)}</div>`;
+  } h+='</div>'; }
   $('#listSec').innerHTML=h;
-  // buy again
-  const again=items().filter(i=>!i.on).sort((a,b)=>(b.uses||0)-(a.uses||0)||(b.at||0)-(a.at||0)).slice(0,24);
-  $('#againSec').innerHTML=again.length?`<div class="sec"><h2>Buy again</h2><span class="c">Tap to add</span></div>
-    <div class="strip">${again.map(i=>`<button class="again" data-again="${i.id}">${tile(i).replace('</div>','<span class="plus">+</span></div>')}<div class="l">${esc(i.name)}</div></button>`).join('')}</div>`:'';
+  // buy again: most bought + a folder per aisle
+  const off=items().filter(i=>!i.on).sort(byUse);
+  let a='';
+  if(off.length){
+    a=`<div class="sec"><h2>Buy again</h2><span class="c">Tap to add</span></div>`;
+    if(off.length>6) a+=`<div class="cat sub">Most bought</div><div class="strip">${off.slice(0,12).map(againBtn).join('')}</div><div class="cat sub">By aisle</div>`;
+    const og={}; off.forEach(i=>(og[i.cat]=og[i.cat]||[]).push(i));
+    a+=`<div class="folders">${CATS.filter(([k])=>og[k]).map(([k,n])=>{
+      const g=og[k], prev=g.slice(0,4).map(i=>imgTile(i.img,'var(--surface)',emojiOf(i))).join('');
+      return `<button class="folder" data-afold="${k}"><div class="fbox" style="background:var(--t-${k})">${prev}</div><div class="fl">${esc(n)}</div><div class="fc">${g.length} item${g.length===1?'':'s'}</div></button>`;
+    }).join('')}</div>`;
+  }
+  $('#againSec').innerHTML=a;
   // basket
+  B.sort((x,y)=>(y.u||0)-(x.u||0));
   $('#basketSec').innerHTML=B.length?`<div class="sec basketbar"><h2>In the basket</h2><button class="btn sm ghost" id="clearBasket">Clear basket</button></div>
-    <div class="grid">${B.sort((a,b)=>(b.u||0)-(a.u||0)).map(card).join('')}</div>`:'';
+    ${rows?`<div class="aisle"><div class="abody rows nohead">${B.map(rowCard).join('')}</div></div>`:`<div class="grid">${B.map(card).join('')}</div>`}`:'';
   justAdded=null; setSync();
   // tabs
   const onR=view.tab==='recipes';
@@ -1100,11 +1218,11 @@ $('#suggest').addEventListener('click',e=>{
   addItem(it.name,p&&p.qty); $('#addInput').value=''; $('#suggest').innerHTML=''; commit();
 });
 document.addEventListener('click',e=>{
-  if(recipeClick(e)) return;
+  if(recipeClick(e)||listClick(e)) return;
   const ed=e.target.closest('[data-edit]'); if(ed){ e.stopPropagation(); editSheet(ed.dataset.edit); return; }
   const ag=e.target.closest('[data-again]'); if(ag){ const it=D.items[ag.dataset.again]; if(it){ addItem(it.name); commit(); } return; }
   if(e.target.closest('#clearBasket')){ clearBasket(); return; }
-  const c=e.target.closest('.card[data-id]'); if(c) toggle(c.dataset.id);
+  const c=e.target.closest('.card[data-id],.li[data-id]'); if(c) toggle(c.dataset.id);
 });
 $('#settingsBtn').onclick=settingsSheet;
 $('#rSearch').addEventListener('input',()=>renderRecipes());
